@@ -16,6 +16,7 @@ module.exports = {
         'offline-color': '#F3CCAC',
         'weekend-color': '#B9C0E0',
         'border-color': '#22355EB2',
+        'blue-color': '#55A8FD',
       },
       boxShadow: {
         '3xl': '0px 3px 5px 0px rgba(0, 0, 0, 0.10);',
