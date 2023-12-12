@@ -19,6 +19,7 @@ module.exports = {
         'blue-color': '#55A8FD',
         'loading-color': '#132142cc',
         'red-color': '#E4345E',
+        'outer-color': '#FFFFFF33',
       },
     },
   },

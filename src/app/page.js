@@ -160,28 +160,41 @@ const Home = () => {
                         {item.date}
                       </td>
                       <td>
-                        {item?.check_in && (
-                          <p className="py-2 w-[8.9rem] mx-auto border border-blue-color text-blue-color rounded max-md:w-[7rem]">
-                            {moment(item?.check_in, 'hhmm').format('hh:mm')}
-                          </p>
-                        )}
+                        <p
+                          className={`py-2 w-[8.9rem] ${
+                            item?.check_in
+                              ? 'border'
+                              : 'bg-outer-color h-[2.8rem] max-md:h-[2.5rem]'
+                          } mx-auto border-blue-color text-blue-color rounded max-md:w-[7rem]`}
+                        >
+                          {item?.check_in}
+                        </p>
                       </td>
                       <td>
-                        {item?.check_out && (
-                          <p className="py-2 w-[8.9rem] mx-auto border border-orange-color text-orange-color rounded max-md:w-[7rem]">
-                            {item?.check_out}
-                          </p>
-                        )}
+                        <p
+                          className={`py-2 w-[8.9rem] ${
+                            item?.check_out
+                              ? 'border'
+                              : 'bg-outer-color h-[2.8rem] max-md:h-[2.5rem]'
+                          } mx-auto border-orange-color text-orange-color rounded max-md:w-[7rem]`}
+                        >
+                          {item?.check_out}
+                        </p>
                       </td>
                       <td>
-                        {item?.check_in && (
-                          <p className="py-2 w-[8.9rem] mx-auto border border-primary-color rounded max-md:w-[7rem]">
-                            {moment(item?.check_out, 'hhmm').diff(
+                        <p
+                          className={`py-2 w-[8.9rem] ${
+                            item?.check_in
+                              ? 'border'
+                              : 'bg-outer-color h-[2.8rem] max-md:h-[2.5rem]'
+                          } mx-auto border-primary-color rounded max-md:w-[3.5rem]`}
+                        >
+                          {item?.check_in &&
+                            moment(item?.check_out, 'hhmm').diff(
                               moment(item?.check_in, 'hhmm'),
                               'hours'
                             )}
-                          </p>
-                        )}
+                        </p>
                       </td>
                     </tr>
                   ))}
