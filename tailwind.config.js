@@ -16,9 +16,9 @@ module.exports = {
         'offline-color': '#F3CCAC',
         'weekend-color': '#B9C0E0',
         'border-color': '#22355EB2',
-      },
-      boxShadow: {
-        '3xl': '0px 3px 5px 0px rgba(0, 0, 0, 0.10);',
+        'blue-color': '#55A8FD',
+        'loading-color': '#132142cc',
+        'red-color': '#E4345E',
       },
     },
   },

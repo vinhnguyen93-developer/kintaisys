@@ -24,6 +24,10 @@ export default function RootLayout({ children, session }) {
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
+        <script
+          src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
+          type="module"
+        ></script>
       </head>
       <body className={inter.className}>
         <SessionProvider session={session}>
