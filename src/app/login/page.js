@@ -1,45 +1,28 @@
-"use client";
-import { useSession, signIn, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import styles from "./login.css";
+'use client';
+
+import { signIn, useSession } from 'next-auth/react';
 
 export default function Login() {
-  const { data: session } = useSession();
-  const router = useRouter();
-  if (session) {
-    return (
-      <div className={styles.container}>
-        <h1 className="title">Create Next App</h1>
-        <div className={styles.content}>
-          <h2>
-            {" "}
-            Signed in as {session.user.email} <br />
-          </h2>
-          <div classname={styles.btns}>
-            <button className={styles.button} onClick={() => router.push("/")}>
-              User Profile
-            </button>
-            <button
-              className={styles.button}
-              onClick={() => {
-                signOut();
-              }}
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const { data } = useSession();
+
+  console.log(data);
+
   return (
-    <div className="container-login">
-      <img src="/logo_knen.png" alt="Example" />
-      <div className={styles.content}>
-        <p className="text-login">Welcome to CCK Timekeeper!</p>
-        <button className="button-login" onClick={() => signIn()}>
-          SIGN IN
-        </button>
+    <div className="flex items-center justify-center">
+      <div className="mt-[16rem] text-center">
+        <img src="/logo_knen.png" alt="Example" />
+        <div className="mt-6">
+          <p className="font-semibold text-primary-color text-[1.8rem]">
+            Welcome to CCK Timekeeper!
+          </p>
+          <button
+            className="mt-14 bg-primary-color w-[28rem] max-md:w-[25rem] py-8 text-white font-semibold max-md:text-[1.8rem] rounded-xl"
+            onClick={() => signIn('google')}
+          >
+            <i className="fa-brands fa-google mr-4"></i>
+            Login with Google
+          </button>
+        </div>
       </div>
     </div>
   );
