@@ -5,9 +5,12 @@ import { useEffect, useState } from 'react';
 
 import { dataFake } from './data';
 import Loading from './loading';
+import { useSession } from 'next-auth/react';
 
 const Home = () => {
   const time = new Date();
+
+  const { data } = useSession();
 
   const [loading, setLoading] = useState(false);
   const [isCheckIn, setIsCheckIn] = useState(false);
@@ -17,6 +20,8 @@ const Home = () => {
   );
 
   useEffect(() => {
+    console.log(data);
+
     setInterval(() => {
       const date = new Date();
       const timeFormat = moment(
