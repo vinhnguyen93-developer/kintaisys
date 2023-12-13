@@ -2,14 +2,13 @@
 
 import moment from 'moment';
 import { useEffect, useState } from 'react';
+import { signOut, useSession } from 'next-auth/react';
 
 import { dataFake } from './data';
 import Loading from './loading';
-import { useSession } from 'next-auth/react';
 
 const Home = () => {
   const time = new Date();
-
   const { data } = useSession();
 
   const [loading, setLoading] = useState(false);
@@ -20,8 +19,6 @@ const Home = () => {
   );
 
   useEffect(() => {
-    console.log(data);
-
     setInterval(() => {
       const date = new Date();
       const timeFormat = moment(
@@ -50,16 +47,22 @@ const Home = () => {
         <div className="w-1/5 px-6 py-10 h-screen bg-primary-color text-white max-md:w-full max-md:h-full max-md:py-8">
           <div className="flex items-center cursor-pointer">
             <div className="bg-white rounded-md mr-4 shrink-0 sidebar-avatar">
-              <img src="https://cdn-icons-png.flaticon.com/512/5556/5556512.png" />
+              <img src={data?.user.image} />
             </div>
             <div className="flex items-center w-full justify-between">
               <div className="flex flex-col">
-                <h3 className="font-bold mb-3">Nguyen Thi Kim Chinh</h3>
+                <h3 className="font-bold mb-3">{data?.user.name}</h3>
                 <p>IT Tech</p>
               </div>
 
               <i className="fa-solid fa-chevron-right"></i>
             </div>
+          </div>
+          <div className="flex items-center cursor-pointer mt-10">
+            <i className="fa-solid fa-arrow-right-from-bracket"></i>
+            <button onClick={signOut} className="ml-4 font-semibold">
+              Logout
+            </button>
           </div>
         </div>
         <div className="flex-1 px-6 py-10 h-screen">

@@ -18,12 +18,15 @@ export default NextAuth({
       if (account?.access_token) {
         token.access_token = account.access_token;
       }
-      return token; 
+      return token;
     },
     async session({ session, token }) {
       session.accessToken = token.access_token;
       return session;
     },
+  },
+  pages: {
+    signIn: '/login',
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
