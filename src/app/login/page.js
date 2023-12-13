@@ -1,12 +1,8 @@
 'use client';
 
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 
 export default function Login() {
-  const { data } = useSession();
-
-  console.log(data);
-
   return (
     <div className="flex items-center justify-center">
       <div className="mt-[16rem] text-center">
@@ -17,7 +13,9 @@ export default function Login() {
           </p>
           <button
             className="mt-14 bg-primary-color w-[28rem] max-md:w-[25rem] py-8 text-white font-semibold max-md:text-[1.8rem] rounded-xl"
-            onClick={() => signIn('google')}
+            onClick={() =>
+              signIn('google', { callbackUrl: 'http://localhost:3000/' })
+            }
           >
             <i className="fa-brands fa-google mr-4"></i>
             Login with Google
