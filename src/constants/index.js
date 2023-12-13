@@ -1,4 +1,10 @@
-export const GOOGLE_CLIENT_ID = "96305492305-bout7jov9hgpl0uc9itmv8b7t86sc4ua.apps.googleusercontent.com"
-export const GOOGLE_CLIENT_SECRET = "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"
-export const NEXTAUTH_URL = "http://localhost:3000"
-export const NEXT_PUBLIC_API_URL = "https://sheets.googleapis.com/v4/spreadsheets"
+// import getConfig from 'next/config';
+// const { publicRuntimeConfig } = getConfig();
+import { publicRuntimeConfig } from '../../next.config'
+
+console.log('publicRuntimeConfig', publicRuntimeConfig);
+
+export const GOOGLE_CLIENT_ID = publicRuntimeConfig.GOOGLE_CLIENT_ID
+export const GOOGLE_CLIENT_SECRET = publicRuntimeConfig.GOOGLE_CLIENT_SECRET
+export const NEXTAUTH_URL = publicRuntimeConfig.NEXTAUTH_URL
+export const NEXT_PUBLIC_API_URL = publicRuntimeConfig.NEXT_PUBLIC_API_URL

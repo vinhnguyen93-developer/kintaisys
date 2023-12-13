@@ -5,8 +5,6 @@ import { signIn, useSession } from 'next-auth/react';
 export default function Login() {
   const { data } = useSession();
 
-  console.log(data);
-
   return (
     <div className="flex items-center justify-center">
       <div className="mt-[16rem] text-center">
