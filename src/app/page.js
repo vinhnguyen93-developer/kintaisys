@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import moment from 'moment';
-import { useEffect, useState } from 'react';
-import { signOut, useSession } from 'next-auth/react';
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 
-import { dataFake } from './data';
-import Loading from './loading';
+import { dataFake } from "./data";
+import Loading from "./loading";
+import { readData, writeSheet, checkTokenInvalid } from "@/utils/spreadsheet";
 
 const Home = () => {
   const time = new Date();
   const { data } = useSession();
-
   const [loading, setLoading] = useState(false);
   const [isCheckIn, setIsCheckIn] = useState(false);
   const [selectMonth, setSelectMonth] = useState(0);
@@ -23,11 +23,48 @@ const Home = () => {
       const date = new Date();
       const timeFormat = moment(
         `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
-        'hhmmss'
-      ).format('HH:mm:ss');
+        "hhmmss"
+      ).format("HH:mm:ss");
       setTimer(timeFormat);
     }, 1000);
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      console.log("phii lv data change");
+      demo();
+    }
+  }, [data]);
+
+  const demo = async () => {
+    // readData("1")
+    //   .then((result) => {
+    //     console.log(result.data); // Dữ liệu từ Google Sheets
+    //   })
+    //   .catch((error) => {
+    //     console.error("Đã xảy ra lỗi:", error);
+    //   });
+
+    // writeSheet("1", "B18", "Phi test 2", data.accessToken)
+    //   .then((result) => {
+    //     console.log("write success");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Đã xảy ra lỗi wirte:", error);
+    //   });
+
+    checkTokenInvalid(data.accessToken)
+      .then((response) => {
+        console.log(response);
+        const expiresIn = response.data.expires_in;
+        console.log(
+          `AccessToken còn hiệu lực, thời gian còn lại: ${expiresIn} giây`
+        );
+      })
+      .catch((error) => {
+        console.log("AccessToken đã hết hạn");
+      });
+  };
 
   const handleCheckIn = () => {
     setLoading(true);
