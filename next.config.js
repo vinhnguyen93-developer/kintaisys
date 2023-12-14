@@ -9,8 +9,8 @@ const nextConfig = {
     NEXTAUTH_URL_INTERNAL: 'http://localhost:3000/',
     NEXTAUTH_SECRET: 'c36cefe4d56653b1c615f4e0fbe580e3',
     NEXT_PUBLIC_API_URL: 'https://sheets.googleapis.com/v4/spreadsheets',
-    SHEET_ID: '13jaPWYKMz9oe0TplOOIlTcSDuPTcWndh7Ras6UXtBUM',
-    API_KEY: 'AIzaSyCKVNGMGP904d8nCyPKPDvVfK-DekXlAhc'
+    SHEET_ID: '12KAc4XeZcQ-mUTgU37Hu0fVEXPyl7zKTmn5NmHWq2Tk',
+    API_KEY: 'AIzaSyCKVNGMGP904d8nCyPKPDvVfK-DekXlAhc',
   },
 };
 
