@@ -1,10 +1,9 @@
 // import getConfig from 'next/config';
 // const { publicRuntimeConfig } = getConfig();
-import { publicRuntimeConfig } from '../../next.config'
 
-console.log('publicRuntimeConfig', publicRuntimeConfig);
-
-export const GOOGLE_CLIENT_ID = publicRuntimeConfig.GOOGLE_CLIENT_ID
-export const GOOGLE_CLIENT_SECRET = publicRuntimeConfig.GOOGLE_CLIENT_SECRET
-export const NEXTAUTH_URL = publicRuntimeConfig.NEXTAUTH_URL
-export const NEXT_PUBLIC_API_URL = publicRuntimeConfig.NEXT_PUBLIC_API_URL
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
+export const NEXTAUTH_URL = process.env.NEXTAUTH_URL
+export const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
+export const SHEET_ID = process.env.SHEET_ID
+export const API_KEY = process.env.API_KEY
