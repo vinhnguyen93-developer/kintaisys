@@ -23,6 +23,12 @@ const Home = () => {
     `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
   );
 
+  const [userInfo, setUserInfo] = useState(null);
+  const [checkinIndex, setCheckinIndex] = useState(-1);
+  const [dataList, setDataList] = useState([]);
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1;
+
   useEffect(() => {
     setInterval(() => {
       const date = new Date();
@@ -36,42 +42,57 @@ const Home = () => {
 
   useEffect(() => {
     if (data) {
-      demo();
+      readData("members")
+        .then((result) => {
+          const jsonData = tableToJson(result?.data?.values);
+
+          const verifyEmail = jsonData.filter((member) => {
+            if (member.email === data?.user.email) {
+              localStorage.setItem("user info", JSON.stringify(member));
+              setUserInfo(member);
+              return true;
+            }
+          });
+
+          if (verifyEmail.length === 0) {
+            alert("Wrong email");
+            signOut();
+          }
+        })
+        .catch((error) => {
+          console.error("Đã xảy ra lỗi:", error);
+        });
     }
   }, [data]);
 
-  const demo = async () => {
-    readData('members')
+  useEffect(() => {
+    if (userInfo) {
+      getData(currentMonth);
+    }
+  }, [userInfo]);
+
+  const getData = async (month) => {
+    readData(month)
       .then((result) => {
-        const jsonData = tableToJson(result?.data?.values);
+        const values = result?.data?.values;
+        let newList = [values[4], values[5]];
 
-        const verifyEmail = jsonData.filter((member) => {
-          if (member.email === data?.user.email) {
-            localStorage.setItem('user info', JSON.stringify(member));
-            return true;
+        for (let index = 0; index < values.length; index++) {
+          const row = values[index];
+          if (row.length == 0) continue;
+          if (row[1] === userInfo.name) {
+            newList.push(row);
+            if (newList.length == 4 && month === currentMonth) {
+              setCheckinIndex(index);
+              newList.push(values[index + 1]);
+              mapingList(newList);
+              break;
+            }
           }
-        });
-
-        if (verifyEmail.length === 0) {
-          alert('Wrong email');
-          signOut();
         }
       })
       .catch((error) => {
-        console.error('Đã xảy ra lỗi:', error);
-      });
-
-    readData('10')
-      .then((result) => {
-        const newData = result?.data?.values;
-
-        const userData = newData.filter((item, index) => {
-          // console.log(item);
-          // console.log(index);
-        });
-      })
-      .catch((error) => {
-        console.error('Đã xảy ra lỗi:', error);
+        console.error("Đã xảy ra lỗi:", error);
       });
 
     // writeSheet("1", "B18", "Phi test 2", data.accessToken)
@@ -82,16 +103,37 @@ const Home = () => {
     //     console.error("Đã xảy ra lỗi wirte:", error);
     //   });
 
-    checkTokenInvalid(data.accessToken)
-      .then((response) => {
-        const expiresIn = response.data.expires_in;
-        console.log(
-          `AccessToken còn hiệu lực, thời gian còn lại: ${expiresIn} giây`
-        );
-      })
-      .catch((error) => {
-        signOut();
-      });
+    // checkTokenInvalid(data.accessToken)
+    //   .then((response) => {
+    //     const expiresIn = response.data.expires_in;
+    //     console.log(
+    //       `AccessToken còn hiệu lực, thời gian còn lại: ${expiresIn} giây`
+    //     );
+    //   })
+    //   .catch((error) => {
+    //     signOut();
+    //   });
+  };
+
+  const mapingList = (arrays) => {
+    if (arrays && arrays.length == 5) {
+      const lstDay = arrays[0];
+      const lstDate = arrays[1];
+      const lstTime = arrays[2];
+      const lstCheckIn = arrays[3];
+      const lstCheckOut = arrays[4];
+      let listTmp = [];
+      for (let index = 2; index < lstDay.length; index++) {
+        listTmp.push({
+          day: lstDay[index],
+          date: lstDate[index],
+          totalTime: lstTime[index] || "",
+          timeCheckIn: lstCheckIn[index] || "",
+          timeCheckOut: lstCheckOut[index] || "",
+        });
+      }
+      setDataList(listTmp);
+    }
   };
 
   const handleCheckIn = () => {
