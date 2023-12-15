@@ -324,6 +324,7 @@ const Home = () => {
                               className={`py-2 w-[8.9rem] ${
                                 item?.total_time === 'w' ||
                                 item?.total_time.toUpperCase() === 'O' ||
+                                item?.total_time.toUpperCase() === 'H' ||
                                 item?.total_time === ''
                                   ? 'bg-outer-color h-[2.8rem] max-md:h-[2.5rem]'
                                   : 'border'
