@@ -48,11 +48,11 @@ export const tableToJson = (table) => {
 
 // index starts from 0
 export const getColumnLetter = (index) => {
-  let columnLetter = "";
-  while (index > 0) {
-    let remainder = (index - 1) % 26;
+  let columnLetter = '';
+  while (index >= 0) {
+    let remainder = index % 26;
     columnLetter = String.fromCharCode(65 + remainder) + columnLetter;
-    index = Math.floor((index - 1) / 26);
+    index = Math.floor(index / 26) - 1;
   }
   return columnLetter;
 };
