@@ -4,7 +4,6 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 
-import { dataFake } from './data';
 import Loading from './loading';
 import {
   readData,
@@ -14,20 +13,19 @@ import {
 } from '@/utils/spreadsheet';
 
 const Home = () => {
-  const time = new Date();
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1;
   const { data } = useSession();
+
   const [loading, setLoading] = useState(false);
   const [isCheckIn, setIsCheckIn] = useState(false);
-  const [selectMonth, setSelectMonth] = useState(0);
+  const [selectMonth, setSelectMonth] = useState(currentMonth);
   const [timer, setTimer] = useState(
-    `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
+    `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`
   );
-
   const [userInfo, setUserInfo] = useState(null);
   const [checkinIndex, setCheckinIndex] = useState(-1);
   const [dataList, setDataList] = useState([]);
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() + 1;
 
   useEffect(() => {
     setInterval(() => {
@@ -42,36 +40,37 @@ const Home = () => {
 
   useEffect(() => {
     if (data) {
-      readData("members")
+      readData('members')
         .then((result) => {
           const jsonData = tableToJson(result?.data?.values);
 
           const verifyEmail = jsonData.filter((member) => {
             if (member.email === data?.user.email) {
-              localStorage.setItem("user info", JSON.stringify(member));
+              localStorage.setItem('user info', JSON.stringify(member));
               setUserInfo(member);
               return true;
             }
           });
 
           if (verifyEmail.length === 0) {
-            alert("Wrong email");
+            alert('Wrong email');
             signOut();
           }
         })
         .catch((error) => {
-          console.error("Đã xảy ra lỗi:", error);
+          console.error('Đã xảy ra lỗi:', error);
         });
     }
   }, [data]);
 
   useEffect(() => {
     if (userInfo) {
-      getData(currentMonth);
+      getData(selectMonth);
     }
-  }, [userInfo]);
+  }, [userInfo, selectMonth]);
 
   const getData = async (month) => {
+    setLoading(true);
     readData(month)
       .then((result) => {
         const values = result?.data?.values;
@@ -80,19 +79,24 @@ const Home = () => {
         for (let index = 0; index < values.length; index++) {
           const row = values[index];
           if (row.length == 0) continue;
-          if (row[1] === userInfo.name) {
+          if (row[1] === userInfo?.name) {
             newList.push(row);
-            if (newList.length == 4 && month === currentMonth) {
-              setCheckinIndex(index);
+            if (newList.length == 4) {
               newList.push(values[index + 1]);
               mapingList(newList);
               break;
             }
+
+            if (month === currentMonth) {
+              setCheckinIndex(index);
+            }
           }
         }
+
+        setLoading(false);
       })
       .catch((error) => {
-        console.error("Đã xảy ra lỗi:", error);
+        console.error('Đã xảy ra lỗi:', error);
       });
 
     // writeSheet("1", "B18", "Phi test 2", data.accessToken)
@@ -123,16 +127,24 @@ const Home = () => {
       const lstCheckIn = arrays[3];
       const lstCheckOut = arrays[4];
       let listTmp = [];
+
+      let day = 0;
+
       for (let index = 2; index < lstDay.length; index++) {
+        const startDay = moment(
+          `${currentDate.getFullYear()}-${selectMonth - 1}-${lstDate[2]}`
+        );
+
         listTmp.push({
-          day: lstDay[index],
-          date: lstDate[index],
-          totalTime: lstTime[index] || "",
-          timeCheckIn: lstCheckIn[index] || "",
-          timeCheckOut: lstCheckOut[index] || "",
+          date: startDay.add(day, 'days').format('ddd, MMM D YYYY'),
+          total_time: lstTime[index] || '',
+          check_in: lstCheckIn[index] || '',
+          check_out: lstCheckOut[index] || '',
         });
+
+        day++;
       }
-      setDataList(listTmp);
+      setDataList(listTmp.reverse());
     }
   };
 
@@ -209,10 +221,18 @@ const Home = () => {
                 name="month"
                 id="months"
               >
-                <option value="0">{`Thu, Dec 25 2023 - Fri, Jan 25 2024`}</option>
-                <option value="1">{`Thu, Jan 25 2024 - Fri, Feb 25 2024`}</option>
-                <option value="2">{`Thu, Jan 25 2024 - Fri, Feb 25 2024`}</option>
-                <option value="3">{`Thu, Jan 25 2024 - Fri, Feb 25 2024`}</option>
+                <option value="1">{`Dec 25 2022 - Jan 25 2023`}</option>
+                <option value="2">{`Jan 25 2023 - Feb 25 2023`}</option>
+                <option value="3">{`Fed 25 2023 - Mar 25 2023`}</option>
+                <option value="4">{`Mar 25 2023 - Apr 25 2023`}</option>
+                <option value="5">{`Apr 25 2023 - May 25 2023`}</option>
+                <option value="6">{`May 25 2023 - Jun 25 2023`}</option>
+                <option value="7">{`Jun 25 2023 - Jul 25 2023`}</option>
+                <option value="8">{`Jul 25 2023 - Aug 25 2023`}</option>
+                <option value="9">{`Aug 25 2023 - Sep 25 2023`}</option>
+                <option value="10">{`Sep 25 2023 - Oct 25 2023`}</option>
+                <option value="11">{`Oct 25 2023 - Nov 25 2023`}</option>
+                <option value="12">{`Nov 25 2023 - Dec 25 2023`}</option>
               </select>
             </div>
             <div className="flex ml-12 max-md:ml-0">
@@ -254,65 +274,69 @@ const Home = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-second-color text-[1.6rem] text-primary-color font-medium max-md:text-[1.3rem]">
-                  {dataFake?.map((item) => (
-                    <tr
-                      key={item.id}
-                      className={`h-[5.4rem] ${
-                        moment(item.date, 'DD/MM/YYYY').weekday() === 0 ||
-                        moment(item.date, 'DD/MM/YYYY').weekday() === 6
-                          ? 'bg-weekend-color'
-                          : ''
-                      }`}
-                    >
-                      <td
-                        className={`leading-7 ${
-                          moment(item.date, 'DD/MM/YYYY').weekday() === 0 ||
-                          moment(item.date, 'DD/MM/YYYY').weekday() === 6
-                            ? 'text-red-color'
-                            : ''
-                        }`}
-                      >
-                        {item.date}
-                      </td>
-                      <td>
-                        <p
-                          className={`py-2 w-[8.9rem] ${
-                            item?.check_in
-                              ? 'border'
-                              : 'bg-outer-color h-[2.8rem] max-md:h-[2.5rem]'
-                          } mx-auto border-blue-color text-blue-color rounded max-md:w-[7rem]`}
+                  {dataList?.map(
+                    (item) =>
+                      moment().diff(item?.date) >= 0 && (
+                        <tr
+                          key={item.id}
+                          className={`h-[5.4rem] ${
+                            item?.total_time === 'w'
+                              ? 'bg-weekend-color'
+                              : item?.total_time === 'O'
+                              ? 'bg-offline-color'
+                              : item?.total_time === 'H'
+                              ? 'bg-holiday-color'
+                              : ''
+                          }`}
                         >
-                          {item?.check_in}
-                        </p>
-                      </td>
-                      <td>
-                        <p
-                          className={`py-2 w-[8.9rem] ${
-                            item?.check_out
-                              ? 'border'
-                              : 'bg-outer-color h-[2.8rem] max-md:h-[2.5rem]'
-                          } mx-auto border-orange-color text-orange-color rounded max-md:w-[7rem]`}
-                        >
-                          {item?.check_out}
-                        </p>
-                      </td>
-                      <td>
-                        <p
-                          className={`py-2 w-[8.9rem] ${
-                            item?.check_in
-                              ? 'border'
-                              : 'bg-outer-color h-[2.8rem] max-md:h-[2.5rem]'
-                          } mx-auto border-primary-color rounded max-md:w-[3.5rem]`}
-                        >
-                          {item?.check_in &&
-                            moment(item?.check_out, 'hhmm').diff(
-                              moment(item?.check_in, 'hhmm'),
-                              'hours'
-                            )}
-                        </p>
-                      </td>
-                    </tr>
-                  ))}
+                          <td
+                            className={`leading-7 ${
+                              item?.total_time === 'w' ? 'text-red-color' : ''
+                            }`}
+                          >
+                            {item?.date}
+                          </td>
+                          <td>
+                            <p
+                              className={`py-2 w-[8.9rem] ${
+                                item?.check_in === 'w' || item?.check_in === ''
+                                  ? 'bg-outer-color h-[2.8rem] max-md:h-[2.5rem]'
+                                  : 'border'
+                              } mx-auto border-blue-color text-blue-color rounded max-md:w-[7rem]`}
+                            >
+                              {item?.check_in !== 'w' && item?.check_in}
+                            </p>
+                          </td>
+                          <td>
+                            <p
+                              className={`py-2 w-[8.9rem] ${
+                                item?.check_out === 'w' ||
+                                item?.check_out === ''
+                                  ? 'bg-outer-color h-[2.8rem] max-md:h-[2.5rem]'
+                                  : 'border'
+                              } mx-auto border-orange-color text-orange-color rounded max-md:w-[7rem]`}
+                            >
+                              {item?.check_out !== 'w' && item?.check_out}
+                            </p>
+                          </td>
+                          <td>
+                            <p
+                              className={`py-2 w-[8.9rem] ${
+                                item?.total_time === 'w' ||
+                                item?.total_time === 'O' ||
+                                item?.total_time === ''
+                                  ? 'bg-outer-color h-[2.8rem] max-md:h-[2.5rem]'
+                                  : 'border'
+                              } mx-auto border-primary-color rounded max-md:w-[3.5rem]`}
+                            >
+                              {item?.total_time !== 'w' &&
+                                item?.total_time !== 'O' &&
+                                item?.total_time}
+                            </p>
+                          </td>
+                        </tr>
+                      )
+                  )}
                 </tbody>
               </table>
             </div>
