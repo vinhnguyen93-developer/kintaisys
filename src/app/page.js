@@ -201,7 +201,7 @@ const Home = () => {
             <div className="flex items-center w-full justify-between">
               <div className="flex flex-col">
                 <h3 className="font-bold mb-3">{data?.user.name}</h3>
-                <p>IT Tech</p>
+                {/* <p>IT Tech</p> */}
               </div>
 
               <i className="fa-solid fa-chevron-right"></i>
@@ -216,12 +216,12 @@ const Home = () => {
         </div>
         <div className="flex-1 px-6 py-10 h-screen">
           <div className="flex ml-12 max-md:ml-0">
-            <p className="w-48 mr-4 border-b-4 border-green-color py-2 font-semibold max-md:text-[1.2rem] max-md:w-[8.3rem]">
+            {/* <p className="w-48 mr-4 border-b-4 border-green-color py-2 font-semibold max-md:text-[1.2rem] max-md:w-[8.3rem]">
               Off Days: 2ds
-            </p>
-            <p className="w-56 border-b-4 border-orange-color py-2 font-semibold max-md:text-[1.2rem] max-md:w-[12rem]">
+            </p> */}
+            {/* <p className="w-56 border-b-4 border-orange-color py-2 font-semibold max-md:text-[1.2rem] max-md:w-[12rem]">
               Paid Holidays: 10ds
-            </p>
+            </p> */}
           </div>
 
           <div className="my-16 max-md:my-10">
