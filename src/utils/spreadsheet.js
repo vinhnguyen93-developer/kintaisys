@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { SHEET_ID, API_KEY } from '../constants';
+import axios from "axios";
+import { SHEET_ID, API_KEY } from "../constants";
 
 export const readData = async (sheetName) => {
   return axios.get(
@@ -12,14 +12,14 @@ export const writeSheet = async (month, position, value, accessToken) => {
   const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
   return axios.put(
     apiUrl,
-    { values: [[value]], majorDimension: 'ROWS' },
+    { values: [[value]], majorDimension: "ROWS" },
     {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
       params: {
-        valueInputOption: 'RAW',
+        valueInputOption: "RAW",
       },
     }
   );
@@ -44,4 +44,15 @@ export const tableToJson = (table) => {
   }
 
   return jsonData;
+};
+
+// index starts from 0
+export const getColumnLetter = (index) => {
+  let columnLetter = "";
+  while (index > 0) {
+    let remainder = (index - 1) % 26;
+    columnLetter = String.fromCharCode(65 + remainder) + columnLetter;
+    index = Math.floor((index - 1) / 26);
+  }
+  return columnLetter;
 };
