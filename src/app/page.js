@@ -10,6 +10,7 @@ import {
   writeSheet,
   checkTokenInvalid,
   tableToJson,
+  getColumnLetter
 } from '@/utils/spreadsheet';
 
 const Home = () => {
@@ -18,7 +19,7 @@ const Home = () => {
   const { data } = useSession();
 
   const [loading, setLoading] = useState(false);
-  const [isCheckIn, setIsCheckIn] = useState(false);
+  const [checkInStatus, setCheckInStatus] = useState('2');
   const [selectMonth, setSelectMonth] = useState(currentMonth);
   const [timer, setTimer] = useState(
     `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`
@@ -26,6 +27,7 @@ const Home = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [checkinIndex, setCheckinIndex] = useState(-1);
   const [dataList, setDataList] = useState([]);
+  const [dataListCurrentMonth, setDataListCurrentMont] = useState([]);
 
   useEffect(() => {
     setInterval(() => {
@@ -84,28 +86,19 @@ const Home = () => {
             if (newList.length == 4) {
               newList.push(values[index + 1]);
               mapingList(newList);
+              if (month === currentMonth) {
+                setCheckinIndex(index);
+              }
               break;
-            }
-
-            if (month === currentMonth) {
-              setCheckinIndex(index);
             }
           }
         }
-
         setLoading(false);
       })
       .catch((error) => {
         console.error('Đã xảy ra lỗi:', error);
+        setLoading(false);
       });
-
-    // writeSheet("1", "B18", "Phi test 2", data.accessToken)
-    //   .then((result) => {
-    //     console.log("write success");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Đã xảy ra lỗi wirte:", error);
-    //   });
 
     // checkTokenInvalid(data.accessToken)
     //   .then((response) => {
@@ -135,6 +128,17 @@ const Home = () => {
           `${currentDate.getFullYear()}-${selectMonth - 1}-${lstDate[2]}`
         );
 
+        if (selectMonth === currentMonth && lstDate[index] == currentDate.getDate()) {
+          if(lstCheckIn[index] == '') {
+            setCheckInStatus('0')
+          }
+          else if (lstCheckOut[index] == '') {
+            setCheckInStatus('1')
+          } else {
+            setCheckInStatus('2')
+          }
+        }
+
         listTmp.push({
           date: startDay.add(day, 'days').format('ddd, MMM D YYYY'),
           total_time: lstTime[index] || '',
@@ -144,16 +148,42 @@ const Home = () => {
 
         day++;
       }
+      if (selectMonth === currentMonth) {
+        setDataListCurrentMont([...listTmp]);
+      }
       setDataList(listTmp.reverse());
     }
   };
 
+  const getColumnName = (type) => {
+    let index = dataListCurrentMonth.findIndex((item) => {
+      let date = new Date(item.date);
+      return currentDate.getDate() === date.getDate();
+    });
+    if (type == "checkin") {
+      return `${getColumnLetter(index + 2)}${checkinIndex + 1}`;
+    }
+    return `${getColumnLetter(index + 2)}${checkinIndex + 2}`;
+  };
+
   const handleCheckIn = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setIsCheckIn(!isCheckIn);
-    }, 3000);
+    let position = '';
+    if(checkInStatus === '0') {
+      position = getColumnName('checkin');
+    } else if(checkInStatus === '1') {
+      position = getColumnName('checkout');
+    }
+    if(position !== '') {
+      setLoading(true)
+      writeSheet(currentMonth, position, timer, data.accessToken)
+      .then((result) => {
+        getData(selectMonth);
+      })
+      .catch((error) => {
+        console.error("Đã xảy ra lỗi wirte:", error);
+        setLoading(false)
+      });
+    }
   };
 
   const handleChangeSelect = (event) => {
@@ -199,14 +229,16 @@ const Home = () => {
               <h1 className="text-[7rem] font-semibold text-primary-color mb-8 tracking-[0.2rem] max-md:text-[5.2rem]">
                 {timer}
               </h1>
-              <button
+              {
+                checkInStatus !== '2' && <button
                 onClick={handleCheckIn}
                 className={`text-white ${
-                  isCheckIn ? 'bg-orange-color' : 'bg-green-color'
+                  checkInStatus === '1' ? 'bg-orange-color' : 'bg-green-color'
                 } text-[2.8rem] font-black uppercase py-[1.8rem] w-[25rem] rounded-2xl max-md:text-[2rem] max-md:w-[20rem]`}
               >
-                {isCheckIn ? 'check out' : 'check in'}
+                {checkInStatus === '1' ? 'check out' : 'check in'}
               </button>
+              }
             </div>
           </div>
 
