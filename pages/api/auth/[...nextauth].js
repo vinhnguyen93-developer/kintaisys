@@ -26,7 +26,8 @@ export default NextAuth({
         token.id_token = account.id_token;
       }
       if (trigger === "update") {
-        token.access_token = session.access_token
+        token.access_token = session.access_token;
+        token.id_token = session.id_token
       }
       return token;
     },

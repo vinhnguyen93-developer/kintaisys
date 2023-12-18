@@ -189,7 +189,8 @@ const Home = () => {
         refreshToken(data.refresh_token)
           .then((response) => {
             let newToken = response.data.access_token;
-            updateSession(newToken);
+            let newIdToken = response.data.id_token;
+            updateSession(newToken, newIdToken);
             handleWrite(newToken);
           })
           .catch((error) => {
@@ -202,8 +203,8 @@ const Home = () => {
     }
   };
 
-  const updateSession = async (accessToken) => {
-    await update({ ...data, access_token: accessToken });
+  const updateSession = async (access_token, id_token) => {
+    await update({ ...data, access_token, id_token });
   };
 
   const handleChangeSelect = (event) => {
@@ -248,7 +249,7 @@ const Home = () => {
             <div className="bg-second-color w-[38.6rem] mx-auto text-center py-12 rounded-2xl shadow-xl max-[430px]:w-full">
               <h1
                 className={`text-[7rem] font-semibold text-primary-color ${
-                  checkInStatus !== '2' && mb - 8
+                  checkInStatus !== '2' && 'mb - 8'
                 } tracking-[0.2rem] max-md:text-[5.2rem]`}
               >
                 {timer}
