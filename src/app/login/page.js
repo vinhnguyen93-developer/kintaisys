@@ -14,7 +14,7 @@ export default function Login() {
           <button
             className="mt-14 bg-primary-color w-[28rem] max-md:w-[25rem] py-8 text-white font-semibold max-md:text-[1.8rem] rounded-xl"
             onClick={() =>
-              signIn('google', { callbackUrl: 'http://localhost:3000/' })
+              signIn('google', { callbackUrl: process.env.NEXTAUTH_URL })
             }
           >
             <i className="fa-brands fa-google mr-4"></i>
