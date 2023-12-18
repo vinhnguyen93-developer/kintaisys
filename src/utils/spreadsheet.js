@@ -1,5 +1,6 @@
 import axios from "axios";
-import { SHEET_ID, API_KEY } from "../constants";
+import { SHEET_ID, API_KEY, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "../constants";
+import { jwtDecode } from 'jwt-decode';
 
 export const readData = async (sheetName) => {
   return axios.get(
@@ -45,6 +46,18 @@ export const tableToJson = (table) => {
 
   return jsonData;
 };
+
+export const refreshToken = async (refreshToken) => {
+  const apiUrl = `https://oauth2.googleapis.com/token`;
+  let data = {
+    client_id: GOOGLE_CLIENT_ID,
+    client_secret: GOOGLE_CLIENT_SECRET,
+    refresh_token: refreshToken,
+    grant_type: "refresh_token"
+  }
+  return axios.post( apiUrl,data);
+};
+
 
 // index starts from 0
 export const getColumnLetter = (index) => {

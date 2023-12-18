@@ -1,32 +1,34 @@
-'use client';
+"use client";
 
-import moment from 'moment';
-import { useEffect, useState } from 'react';
-import { signOut, useSession } from 'next-auth/react';
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 
-import Loading from './loading';
+import Loading from "./loading";
 import {
   readData,
   writeSheet,
   checkTokenInvalid,
   tableToJson,
   getColumnLetter,
-} from '@/utils/spreadsheet';
+  refreshToken,
+} from "@/utils/spreadsheet";
+
+import { jwtDecode } from "jwt-decode";
 
 const Home = () => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1;
-  const { data } = useSession();
+  const { data, update } = useSession();
 
   const [loading, setLoading] = useState(false);
-  const [checkInStatus, setCheckInStatus] = useState('2');
+  const [checkInStatus, setCheckInStatus] = useState("2");
   const [selectMonth, setSelectMonth] = useState(currentMonth);
   const [timer, setTimer] = useState();
   const [userInfo, setUserInfo] = useState(null);
   const [checkinIndex, setCheckinIndex] = useState(-1);
   const [dataList, setDataList] = useState([]);
   const [dataListCurrentMonth, setDataListCurrentMont] = useState([]);
-
   useEffect(() => {
     setInterval(() => {
       const date = new Date();
@@ -97,17 +99,6 @@ const Home = () => {
         console.error('Đã xảy ra lỗi:', error);
         setLoading(false);
       });
-
-    // checkTokenInvalid(data.accessToken)
-    //   .then((response) => {
-    //     const expiresIn = response.data.expires_in;
-    //     console.log(
-    //       `AccessToken còn hiệu lực, thời gian còn lại: ${expiresIn} giây`
-    //     );
-    //   })
-    //   .catch((error) => {
-    //     signOut();
-    //   });
   };
 
   const mapingList = (arrays) => {
@@ -166,24 +157,53 @@ const Home = () => {
     return `${getColumnLetter(index + 2)}${checkinIndex + 2}`;
   };
 
-  const handleCheckIn = () => {
-    let position = '';
-    if (checkInStatus === '0') {
-      position = getColumnName('checkin');
-    } else if (checkInStatus === '1') {
-      position = getColumnName('checkout');
+  const handleWrite = (accessToken) => {
+    let position = "";
+    if (checkInStatus === "0") {
+      position = getColumnName("checkin");
+    } else if (checkInStatus === "1") {
+      position = getColumnName("checkout");
     }
-    if (position !== '') {
-      setLoading(true);
-      writeSheet(currentMonth, position, timer, data.accessToken)
+    if (position !== "") {
+      writeSheet(currentMonth, position, timer, accessToken)
         .then((result) => {
           getData(selectMonth);
         })
         .catch((error) => {
-          console.error('Đã xảy ra lỗi wirte:', error);
+          console.error("Đã xảy ra lỗi wirte:", error);
           setLoading(false);
         });
     }
+  };
+
+  const handleCheckIn = async () => {
+    const decodedToken = jwtDecode(data.id_token);
+    let currentTime = new Date();
+    // console.log('token expire '+new Date(decodedToken.exp * 1000));
+    if (currentTime < decodedToken.exp * 1000) {
+      setLoading(true);
+      handleWrite(data.accessToken);
+    } else {
+      if (data.refresh_token) {
+        setLoading(true);
+        refreshToken(data.refresh_token)
+          .then((response) => {
+            let newToken = response.data.access_token;
+            updateSession(newToken);
+            handleWrite(newToken);
+          })
+          .catch((error) => {
+            console.log("refresh token fail");
+            signOut();
+          });
+      } else {
+        signOut();
+      }
+    }
+  };
+
+  const updateSession = async (accessToken) => {
+    await update({ ...data, access_token: accessToken });
   };
 
   const handleChangeSelect = (event) => {
