@@ -1,18 +1,20 @@
-'use client';
+"use client";
 
-import moment from 'moment';
-import { useEffect, useState } from 'react';
-import { signOut, useSession } from 'next-auth/react';
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 
-import Loading from './loading';
+import Loading from "./loading";
 import {
   readData,
   writeSheet,
   checkTokenInvalid,
   tableToJson,
   getColumnLetter,
-  refreshToken
-} from '@/utils/spreadsheet';
+  refreshToken,
+} from "@/utils/spreadsheet";
+
+import { jwtDecode } from "jwt-decode";
 
 const Home = () => {
   const currentDate = new Date();
@@ -20,7 +22,7 @@ const Home = () => {
   const { data, update } = useSession();
 
   const [loading, setLoading] = useState(false);
-  const [checkInStatus, setCheckInStatus] = useState('2');
+  const [checkInStatus, setCheckInStatus] = useState("2");
   const [selectMonth, setSelectMonth] = useState(currentMonth);
   const [timer, setTimer] = useState(
     `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`
@@ -155,39 +157,54 @@ const Home = () => {
     return `${getColumnLetter(index + 2)}${checkinIndex + 2}`;
   };
 
-  const handleCheckIn = async () => {
-    let position = '';
-    if(checkInStatus === '0') {
-      position = getColumnName('checkin');
-    } else if(checkInStatus === '1') {
-      position = getColumnName('checkout');
+  const handleWrite = (accessToken) => {
+    let position = "";
+    if (checkInStatus === "0") {
+      position = getColumnName("checkin");
+    } else if (checkInStatus === "1") {
+      position = getColumnName("checkout");
     }
-    if(position !== '') {
-      setLoading(true)
-      writeSheet(currentMonth, position, timer, data.accessToken)
-      .then((result) => {
-        getData(selectMonth);
-      })
-      .catch((error) => {
-        console.error("Đã xảy ra lỗi wirte:", error);
-        setLoading(false)
-      });
-    }
-    if(data.refresh_token) {
-      refreshToken(data.refresh_token).then(response => {
-        console.log('philv refrseh token ');
-        console.log(response);
-        let newToken = response.data.access_token;
-        updateSession(newToken);
-      }).catch(error => {
-        console.log('refresh token fail');
-      })
+    if (position !== "") {
+      writeSheet(currentMonth, position, timer, accessToken)
+        .then((result) => {
+          getData(selectMonth);
+        })
+        .catch((error) => {
+          console.error("Đã xảy ra lỗi wirte:", error);
+          setLoading(false);
+        });
     }
   };
 
-  const updateSession =  async (accessToken) => {
-    await update({...data, access_token: accessToken})
-  }
+  const handleCheckIn = async () => {
+    const decodedToken = jwtDecode(data.id_token);
+    let currentTime = new Date();
+    // console.log('token expire '+new Date(decodedToken.exp * 1000));
+    if (currentTime < decodedToken.exp * 1000) {
+      setLoading(true);
+      handleWrite(data.accessToken);
+    } else {
+      if (data.refresh_token) {
+        setLoading(true);
+        refreshToken(data.refresh_token)
+          .then((response) => {
+            let newToken = response.data.access_token;
+            updateSession(newToken);
+            handleWrite(newToken);
+          })
+          .catch((error) => {
+            console.log("refresh token fail");
+            signOut();
+          });
+      } else {
+        signOut();
+      }
+    }
+  };
+
+  const updateSession = async (accessToken) => {
+    await update({ ...data, access_token: accessToken });
+  };
 
   const handleChangeSelect = (event) => {
     setSelectMonth(event.target.value);

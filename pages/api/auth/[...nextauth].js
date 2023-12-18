@@ -22,6 +22,9 @@ export default NextAuth({
       if (account?.refresh_token) {
         token.refresh_token = account.refresh_token;
       }
+      if (account?.id_token) {
+        token.id_token = account.id_token;
+      }
       if (trigger === "update") {
         token.access_token = session.access_token
       }
@@ -30,6 +33,7 @@ export default NextAuth({
     async session({ session, token }) {
       session.accessToken = token.access_token;
       session.refresh_token = token.refresh_token;
+      session.id_token = token.id_token
       return session;
     },
   },
