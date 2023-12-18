@@ -10,7 +10,7 @@ import {
   writeSheet,
   checkTokenInvalid,
   tableToJson,
-  getColumnLetter
+  getColumnLetter,
 } from '@/utils/spreadsheet';
 
 const Home = () => {
@@ -21,9 +21,7 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [checkInStatus, setCheckInStatus] = useState('2');
   const [selectMonth, setSelectMonth] = useState(currentMonth);
-  const [timer, setTimer] = useState(
-    `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`
-  );
+  const [timer, setTimer] = useState();
   const [userInfo, setUserInfo] = useState(null);
   const [checkinIndex, setCheckinIndex] = useState(-1);
   const [dataList, setDataList] = useState([]);
@@ -128,19 +126,21 @@ const Home = () => {
           `${currentDate.getFullYear()}-${selectMonth - 1}-${lstDate[2]}`
         );
 
-        if (selectMonth === currentMonth && lstDate[index] == currentDate.getDate()) {
-          if(lstCheckIn[index] == '') {
-            setCheckInStatus('0')
-          }
-          else if (lstCheckOut[index] == '') {
-            setCheckInStatus('1')
+        if (
+          selectMonth === currentMonth &&
+          lstDate[index] == currentDate.getDate()
+        ) {
+          if (lstCheckIn[index] == '') {
+            setCheckInStatus('0');
+          } else if (lstCheckOut[index] == '') {
+            setCheckInStatus('1');
           } else {
-            setCheckInStatus('2')
+            setCheckInStatus('2');
           }
         }
 
         listTmp.push({
-          date: startDay.add(day, 'days').format('ddd, MMM D YYYY'),
+          date: startDay.add(day, 'days').format('YYYY-MM-DD'),
           total_time: lstTime[index] || '',
           check_in: lstCheckIn[index] || '',
           check_out: lstCheckOut[index] || '',
@@ -160,7 +160,7 @@ const Home = () => {
       let date = new Date(item.date);
       return currentDate.getDate() === date.getDate();
     });
-    if (type == "checkin") {
+    if (type == 'checkin') {
       return `${getColumnLetter(index + 2)}${checkinIndex + 1}`;
     }
     return `${getColumnLetter(index + 2)}${checkinIndex + 2}`;
@@ -168,21 +168,21 @@ const Home = () => {
 
   const handleCheckIn = () => {
     let position = '';
-    if(checkInStatus === '0') {
+    if (checkInStatus === '0') {
       position = getColumnName('checkin');
-    } else if(checkInStatus === '1') {
+    } else if (checkInStatus === '1') {
       position = getColumnName('checkout');
     }
-    if(position !== '') {
-      setLoading(true)
+    if (position !== '') {
+      setLoading(true);
       writeSheet(currentMonth, position, timer, data.accessToken)
-      .then((result) => {
-        getData(selectMonth);
-      })
-      .catch((error) => {
-        console.error("Đã xảy ra lỗi wirte:", error);
-        setLoading(false)
-      });
+        .then((result) => {
+          getData(selectMonth);
+        })
+        .catch((error) => {
+          console.error('Đã xảy ra lỗi wirte:', error);
+          setLoading(false);
+        });
     }
   };
 
@@ -226,19 +226,23 @@ const Home = () => {
 
           <div className="my-16 max-md:my-10">
             <div className="bg-second-color w-[38.6rem] mx-auto text-center py-12 rounded-2xl shadow-xl max-[430px]:w-full">
-              <h1 className="text-[7rem] font-semibold text-primary-color mb-8 tracking-[0.2rem] max-md:text-[5.2rem]">
+              <h1
+                className={`text-[7rem] font-semibold text-primary-color ${
+                  checkInStatus !== '2' && mb - 8
+                } tracking-[0.2rem] max-md:text-[5.2rem]`}
+              >
                 {timer}
               </h1>
-              {
-                checkInStatus !== '2' && <button
-                onClick={handleCheckIn}
-                className={`text-white ${
-                  checkInStatus === '1' ? 'bg-orange-color' : 'bg-green-color'
-                } text-[2.8rem] font-black uppercase py-[1.8rem] w-[25rem] rounded-2xl max-md:text-[2rem] max-md:w-[20rem]`}
-              >
-                {checkInStatus === '1' ? 'check out' : 'check in'}
-              </button>
-              }
+              {checkInStatus !== '2' && (
+                <button
+                  onClick={handleCheckIn}
+                  className={`text-white ${
+                    checkInStatus === '1' ? 'bg-orange-color' : 'bg-green-color'
+                  } text-[2.8rem] font-black uppercase py-[1.8rem] w-[25rem] rounded-2xl max-md:text-[2rem] max-md:w-[20rem]`}
+                >
+                  {checkInStatus === '1' ? 'check out' : 'check in'}
+                </button>
+              )}
             </div>
           </div>
 
@@ -326,7 +330,8 @@ const Home = () => {
                               item?.total_time === 'w' ? 'text-red-color' : ''
                             }`}
                           >
-                            {item?.date}
+                            {item?.date &&
+                              moment(item?.date).format('ddd, MMM D YYYY')}
                           </td>
                           <td>
                             <p
