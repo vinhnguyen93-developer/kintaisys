@@ -10,13 +10,14 @@ import {
   writeSheet,
   checkTokenInvalid,
   tableToJson,
-  getColumnLetter
+  getColumnLetter,
+  refreshToken
 } from '@/utils/spreadsheet';
 
 const Home = () => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1;
-  const { data } = useSession();
+  const { data, update } = useSession();
 
   const [loading, setLoading] = useState(false);
   const [checkInStatus, setCheckInStatus] = useState('2');
@@ -28,7 +29,6 @@ const Home = () => {
   const [checkinIndex, setCheckinIndex] = useState(-1);
   const [dataList, setDataList] = useState([]);
   const [dataListCurrentMonth, setDataListCurrentMont] = useState([]);
-
   useEffect(() => {
     setInterval(() => {
       const date = new Date();
@@ -99,17 +99,6 @@ const Home = () => {
         console.error('Đã xảy ra lỗi:', error);
         setLoading(false);
       });
-
-    // checkTokenInvalid(data.accessToken)
-    //   .then((response) => {
-    //     const expiresIn = response.data.expires_in;
-    //     console.log(
-    //       `AccessToken còn hiệu lực, thời gian còn lại: ${expiresIn} giây`
-    //     );
-    //   })
-    //   .catch((error) => {
-    //     signOut();
-    //   });
   };
 
   const mapingList = (arrays) => {
@@ -166,7 +155,7 @@ const Home = () => {
     return `${getColumnLetter(index + 2)}${checkinIndex + 2}`;
   };
 
-  const handleCheckIn = () => {
+  const handleCheckIn = async () => {
     let position = '';
     if(checkInStatus === '0') {
       position = getColumnName('checkin');
@@ -184,7 +173,21 @@ const Home = () => {
         setLoading(false)
       });
     }
+    if(data.refresh_token) {
+      refreshToken(data.refresh_token).then(response => {
+        console.log('philv refrseh token ');
+        console.log(response);
+        let newToken = response.data.access_token;
+        updateSession(newToken);
+      }).catch(error => {
+        console.log('refresh token fail');
+      })
+    }
   };
+
+  const updateSession =  async (accessToken) => {
+    await update({...data, access_token: accessToken})
+  }
 
   const handleChangeSelect = (event) => {
     setSelectMonth(event.target.value);
