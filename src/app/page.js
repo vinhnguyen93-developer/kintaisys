@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import moment from "moment";
-import { useEffect, useState } from "react";
-import { signOut, useSession } from "next-auth/react";
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { signOut, useSession } from 'next-auth/react';
 
-import Loading from "./loading";
+import Loading from './loading';
 import {
   readData,
   writeSheet,
@@ -12,9 +12,9 @@ import {
   tableToJson,
   getColumnLetter,
   refreshToken,
-} from "@/utils/spreadsheet";
+} from '@/utils/spreadsheet';
 
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 const Home = () => {
   const currentDate = new Date();
@@ -22,7 +22,7 @@ const Home = () => {
   const { data, update } = useSession();
 
   const [loading, setLoading] = useState(false);
-  const [checkInStatus, setCheckInStatus] = useState("2");
+  const [checkInStatus, setCheckInStatus] = useState('2');
   const [selectMonth, setSelectMonth] = useState(currentMonth);
   const [timer, setTimer] = useState();
   const [userInfo, setUserInfo] = useState(null);
@@ -158,19 +158,19 @@ const Home = () => {
   };
 
   const handleWrite = (accessToken) => {
-    let position = "";
-    if (checkInStatus === "0") {
-      position = getColumnName("checkin");
-    } else if (checkInStatus === "1") {
-      position = getColumnName("checkout");
+    let position = '';
+    if (checkInStatus === '0') {
+      position = getColumnName('checkin');
+    } else if (checkInStatus === '1') {
+      position = getColumnName('checkout');
     }
-    if (position !== "") {
+    if (position !== '') {
       writeSheet(currentMonth, position, timer, accessToken)
         .then((result) => {
           getData(selectMonth);
         })
         .catch((error) => {
-          console.error("Đã xảy ra lỗi wirte:", error);
+          console.error('Đã xảy ra lỗi wirte:', error);
           setLoading(false);
         });
     }
@@ -194,7 +194,7 @@ const Home = () => {
             handleWrite(newToken);
           })
           .catch((error) => {
-            console.log("refresh token fail");
+            console.log('refresh token fail');
             signOut();
           });
       } else {
@@ -249,7 +249,7 @@ const Home = () => {
             <div className="bg-second-color w-[38.6rem] mx-auto text-center py-12 rounded-2xl shadow-xl max-[430px]:w-full">
               <h1
                 className={`text-[7rem] font-semibold text-primary-color ${
-                  checkInStatus !== '2' && 'mb - 8'
+                  checkInStatus !== '2' && 'mb-8'
                 } tracking-[0.2rem] max-md:text-[5.2rem]`}
               >
                 {timer}
