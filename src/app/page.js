@@ -41,7 +41,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (data) {
+    if (data && !userInfo) {
       readData('members')
         .then((result) => {
           const jsonData = tableToJson(result?.data?.values);
