@@ -12,7 +12,6 @@ const nextConfig = {
     SHEET_ID: '12KAc4XeZcQ-mUTgU37Hu0fVEXPyl7zKTmn5NmHWq2Tk',
     API_KEY: 'AIzaSyCKVNGMGP904d8nCyPKPDvVfK-DekXlAhc',
   },
-  output: 'export',
 };
 
 module.exports = nextConfig;
