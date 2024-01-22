@@ -20,6 +20,8 @@ module.exports = {
         'loading-color': '#132142cc',
         'red-color': '#E4345E',
         'outer-color': '#FFFFFF33',
+        'gray-color': '#B5B5B5',
+        'white-color': '#FFFFFF'
       },
     },
   },
