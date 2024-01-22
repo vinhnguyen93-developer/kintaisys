@@ -3,15 +3,14 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     GOOGLE_CLIENT_ID:
-      '96305492305-fo21k488mu622784qs2p9ssrcid86vih.apps.googleusercontent.com',
-    GOOGLE_CLIENT_SECRET: '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',
-    NEXTAUTH_URL: 'https://kintaisys-vinhs-projects-52857548.vercel.app',
-    NEXTAUTH_URL_INTERNAL:
-      'https://kintaisys-vinhs-projects-52857548.vercel.app',
+      '96305492305-6hb1a4r04oagd66ttrgtl4fjnrs3383n.apps.googleusercontent.com',
+    GOOGLE_CLIENT_SECRET: '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',
+    NEXTAUTH_URL: 'http://localhost:3000/',
+    NEXTAUTH_URL_INTERNAL: 'http://localhost:3000/',
     NEXTAUTH_SECRET: 'c36cefe4d56653b1c615f4e0fbe580e3',
     NEXT_PUBLIC_API_URL: 'https://sheets.googleapis.com/v4/spreadsheets',
-    SHEET_ID: '12KAc4XeZcQ-mUTgU37Hu0fVEXPyl7zKTmn5NmHWq2Tk',
-    API_KEY: 'AIzaSyB1OJOr1XaF72YMN70hPgHNlhPd29AP6PE',
+    SHEET_ID: '1QMqKfjVt4U_so4LyltUQaXbyOwupQuppIqkZ7hYH2yM',
+    API_KEY: 'AIzaSyDQNX5_VnoIak2aQa8LlDWJE_z5MD6S8m8',
   },
 };
 
