@@ -16,8 +16,6 @@ import {
   updateData
 } from "@/utils/spreadsheet";
 import { useSession, signOut } from 'next-auth/react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Loading from "../loading";
 import { jwtDecode } from "jwt-decode";
 
@@ -117,10 +115,6 @@ const ModalDayOff = ({ isOpen, closeModal, dataList }) => {
       onSuccess: () => {
         wirteRequest(items, data.accessToken)
           .then((res) => {
-            toast.success("Update successful", {
-              position: toast.POSITION.TOP_CENTER,
-              autoClose: 3000,
-            });
             closeModal();
             setLoading(false);
           })
@@ -289,7 +283,6 @@ const ModalDayOff = ({ isOpen, closeModal, dataList }) => {
         </button>
       </div>
       {loading && <Loading />}
-      <ToastContainer />
     </ReactModal>
   );
 };
