@@ -37,12 +37,12 @@ const Header = () => {
 
   return (
     <div className="flex ml-12 max-md:ml-0">
-      <p className="w-48 mr-4 border-b-4 border-green-color py-2 font-semibold max-md:text-[1.2rem] max-md:w-[8.3rem]">
-        Off Days: {userInfo?.dayoff === '0' ?
-        `${userInfo?.dayoff}d` : `${userInfo?.dayoff}ds`}
+      <p className="mr-4 border-b-4 border-green-color py-2 font-semibold max-md:text-[1.2rem] max-md:w-[8.3rem]">
+        Off Days: {userInfo?.dayoff === '0' || userInfo?.dayoff === '0,5' ?
+        `${parseFloat(userInfo?.dayoff.replace(',', '.'))}d` : `${parseFloat(userInfo?.dayoff.replace(',', '.'))}ds`}
       </p>
-      <p className="w-56 border-b-4 border-orange-color py-2 font-semibold max-md:text-[1.2rem] max-md:w-[12rem]">
-        Paid Holidays: {12 - userInfo?.dayoff === 0 ?
+      <p className="border-b-4 border-orange-color py-2 font-semibold max-md:text-[1.2rem] max-md:w-[12rem]">
+        Paid Holidays: {12 - userInfo?.dayoff === 0 || 12 - userInfo?.dayoff === 0.5 ?
         `${12 - parseFloat(userInfo?.dayoff.replace(',', '.'))}d` : `${12 - parseFloat(userInfo?.dayoff.replace(',', '.'))}ds`}
       </p>
     </div>

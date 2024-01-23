@@ -222,6 +222,7 @@ const ModalDayOff = ({ isOpen, closeModal, dataList }) => {
                 rows={4} // Set the number of rows as needed
                 cols={50} // Set the number of columns as needed
                 style={{ width: '450px', height: '170px' }} // Set fixed size
+                maxLength="500"
               />
               <p className="text-blue-color text-[1.2rem] mt-2">
                 {remainingCharacters} characters remainning..({maxCharacters} maximum)
