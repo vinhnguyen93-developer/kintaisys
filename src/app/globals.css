@@ -59,7 +59,7 @@ button {
 }
 
 .div-menu-active {
-  padding: 5px;
+  padding: 10px 5px;
   cursor: pointer;
   background-color: #55A8FD80;
   border-radius: 7px;

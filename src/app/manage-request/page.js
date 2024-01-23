@@ -300,6 +300,7 @@ const ManageRequest = () => {
     setDataList(newLst)
   };
   const getData = async () => {
+    setLoading(true);
     readData(SHEET_REQUEST_OFF)
       .then((result) => {
         const jsonData = tableToJson(result?.data?.values);
@@ -312,9 +313,11 @@ const ManageRequest = () => {
         }
         setDataList(listRequest);
         setDataListInitial(result?.data?.values)
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Đã xảy ra lỗi:", error);
+        setLoading(false);
       });
   }
 
@@ -353,7 +356,6 @@ const ManageRequest = () => {
   return (
     <div className="my-16 max-md:my-10">
       <h4 className="uppercase font-semibold mt-10">Manage leave requests</h4>
-      {loading ? <Loading /> :
       <div className="table-container-manager">
         <table className="table-fixed w-full text-center rounded-t-xl mt-5">
           <thead className="text-primary-color text-[1.8rem] font-semibold max-md:text-[1.3rem]">
@@ -457,7 +459,8 @@ const ManageRequest = () => {
             ))}
           </tbody>
         </table>
-      </div>}
+      </div>
+      {loading && <Loading />}
     </div>
   );
 };

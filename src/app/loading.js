@@ -1,6 +1,6 @@
 const Loading = () => {
   return (
-    <div className="fixed inset-0 bg-loading-color flex items-center justify-center">
+    <div className="fixed z-50 inset-0 bg-loading-color flex items-center justify-center">
       <div className="text-center">
         <dotlottie-player
           src="https://lottie.host/f64d39d0-de68-4b46-b7b7-f387ad070735/VPxjOwSBH9.json"
